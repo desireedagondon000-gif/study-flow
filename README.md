@@ -69,7 +69,7 @@ The root of the application; it initializes the app, providers, and the initial 
 
 ### Landing Page: 
 The entry point for users, featuring a clean, minimal design and a "Get Started" call-to-action.
-<img src="assets/screenshots/profile.png" width="400"> 
+<img src="assets/screenshots/landingpage.png" width="400"> 
 
 ---
 
@@ -86,6 +86,7 @@ Secure authentication flows with simple, consistent UI for managing account acce
 The central hub providing a high-level overview of progress, total tasks, and completion statistics.
 
 <img src="assets/screenshots/dashboard.png" width="400"> 
+<img src="assets/screenshots/dashboard2.png" width="400"> 
 
 ---
 
@@ -93,6 +94,8 @@ The central hub providing a high-level overview of progress, total tasks, and co
 A drag-and-drop-ready task manager to visualize workflow states (To Do, In Progress, Done).
 
 <img src="assets/screenshots/kanban.png" width="400"> 
+<img src="assets/screenshots/kanban2.png" width="400"> 
+
 
 ---
 
@@ -100,6 +103,7 @@ A drag-and-drop-ready task manager to visualize workflow states (To Do, In Progr
 An integrated focus tool allowing users to start study timers based on their specific subjects.
 
 <img src="assets/screenshots/study.png" width="400"> 
+<img src="assets/screenshots/study2.png" width="400"> 
 
 ---
 
