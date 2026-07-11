@@ -126,77 +126,82 @@ class _TaskEditorState extends State<TaskEditor> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(32.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              TextField(
-                controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Title',
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _subjectController, // Added Subject Input
-                decoration: const InputDecoration(
-                  labelText: 'Subject',
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _descController,
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-                maxLines: 5,
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                initialValue:
-                    _status, // Use value instead of initialValue for dynamic updates
-                decoration: const InputDecoration(
-                  labelText: 'Status',
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-                items: ['todo', 'in_progress', 'done']
-                    .map(
-                      (s) => DropdownMenuItem(
-                        value: s,
-                        child: Text(s.toUpperCase()),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  TextField(
+                    controller: _titleController,
+                    decoration: const InputDecoration(
+                      labelText: 'Title',
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _subjectController, // Added Subject Input
+                    decoration: const InputDecoration(
+                      labelText: 'Subject',
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _descController,
+                    decoration: const InputDecoration(
+                      labelText: 'Description',
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    maxLines: 5,
+                  ),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    initialValue:
+                        _status, // Use value instead of initialValue for dynamic updates
+                    decoration: const InputDecoration(
+                      labelText: 'Status',
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    items: ['todo', 'in_progress', 'done']
+                        .map(
+                          (s) => DropdownMenuItem(
+                            value: s,
+                            child: Text(s.toUpperCase()),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (val) => setState(() => _status = val!),
+                  ),
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        foregroundColor: Colors.white,
+                        shape: const RoundedRectangleBorder(),
                       ),
-                    )
-                    .toList(),
-                onChanged: (val) => setState(() => _status = val!),
-              ),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
-                    shape: const RoundedRectangleBorder(),
+                      onPressed: _saveTask,
+                      child: const Text(
+                        "SAVE TASK",
+                        style: TextStyle(fontWeight: FontWeight.w900),
+                      ),
+                    ),
                   ),
-                  onPressed: _saveTask,
-                  child: const Text(
-                    "SAVE TASK",
-                    style: TextStyle(fontWeight: FontWeight.w900),
-                  ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

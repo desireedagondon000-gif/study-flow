@@ -67,13 +67,21 @@ The root of the application; it initializes the app, providers, and the initial 
 
 # SCREENS:
 
+
+### Splash Page: 
+A simple loading screen that will take the user to the landing page.
+
+<img src="assets/screenshots/splashscreen.png" width="400"> 
+
+---
+
 ### Landing Page: 
 The entry point for users, featuring a clean, minimal design and a "Get Started" call-to-action.
 <img src="assets/screenshots/landingpage.png" width="400"> 
 
 ---
 
-### Login/Signup/Reset: 
+### Login/Signup/Reset Pages: 
 Secure authentication flows with simple, consistent UI for managing account access.
 
 <img src="assets/screenshots/login.png" width="400"> 
@@ -82,7 +90,7 @@ Secure authentication flows with simple, consistent UI for managing account acce
 
 ---
 
-### Dashboard: 
+### Dashboard Page: 
 The central hub providing a high-level overview of progress, total tasks, and completion statistics.
 
 <img src="assets/screenshots/dashboard.png" width="400"> 
@@ -91,16 +99,22 @@ The central hub providing a high-level overview of progress, total tasks, and co
 ---
 
 ### Kanban Board: 
-A drag-and-drop-ready task manager to visualize workflow states (To Do, In Progress, Done).
+A task manager for visualizing workflow states (To Do, In Progress, Done).
 
 <img src="assets/screenshots/kanban.png" width="400"> 
 <img src="assets/screenshots/kanban2.png" width="400"> 
 
+---
+
+### Create-Task Page: 
+A screen accessed through the Kanban board where users can create a new task, inputing a subject (Defaults to General if left blank), and adding a description. 
+
+<img src="assets/screenshots/createtask.png" width="400"> 
 
 ---
 
-### Study Sessions: 
-An integrated focus tool allowing users to start study timers based on their specific subjects.
+### Study Planner/Session Page: 
+A Study Session Page where the user can use the pomodoro timer for tasks that require focus, there are also filters for each subject.
 
 <img src="assets/screenshots/study.png" width="400"> 
 <img src="assets/screenshots/study2.png" width="400"> 
@@ -114,8 +128,8 @@ A focused, utility-driven overlay to keep users productive during active study s
 
 ---
 
-### Profile: 
-A personalized user hub for account history and icon-based customization.
+### Profile Page: 
+A user hub for account history of subjects & tasks.
 
 <img src="assets/screenshots/profile.png" width="400"> 
 
