@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:study_flow/providers/tasks_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -11,6 +12,8 @@ class ProfilePage extends ConsumerStatefulWidget {
 }
 
 class _ProfilePageState extends ConsumerState<ProfilePage> {
+  static const _prefIconKey = 'profile_icon_index';
+
   // Default icon
   IconData selectedIcon = Icons.person;
 
@@ -25,6 +28,27 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     Icons.computer,
     Icons.palette,
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSelectedIcon();
+  }
+
+  Future<void> _loadSelectedIcon() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedIndex = prefs.getInt(_prefIconKey) ?? 0;
+    if (savedIndex >= 0 && savedIndex < iconOptions.length) {
+      setState(() {
+        selectedIcon = iconOptions[savedIndex];
+      });
+    }
+  }
+
+  Future<void> _saveSelectedIcon(int index) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_prefIconKey, index);
+  }
 
   void _showIconPicker(BuildContext context) {
     showDialog(
@@ -45,6 +69,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               icon: Icon(iconOptions[index], size: 30),
               onPressed: () {
                 setState(() => selectedIcon = iconOptions[index]);
+                _saveSelectedIcon(index);
                 Navigator.pop(context);
               },
             ),

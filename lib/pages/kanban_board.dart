@@ -61,6 +61,68 @@ class KanbanBoard extends ConsumerWidget {
     }
   }
 
+  Future<void> _updateTaskStatus(
+    BuildContext context,
+    Task task,
+    String newStatus,
+    WidgetRef ref,
+  ) async {
+    if (task.status == newStatus) return;
+
+    try {
+      await Supabase.instance.client
+          .from('tasks')
+          .update({'status': newStatus})
+          .eq('id', task.id);
+      ref.invalidate(tasksProvider);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            backgroundColor: Colors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle_outline, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Moved "${task.title}" to ${newStatus.replaceAll('_', ' ')}',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Error updating task: $e")));
+      }
+    }
+  }
+
+  String _statusFromTitle(String title) {
+    switch (title.toLowerCase()) {
+      case 'to do':
+        return 'todo';
+      case 'in progress':
+        return 'in_progress';
+      case 'done':
+        return 'done';
+      default:
+        return 'todo';
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tasksAsync = ref.watch(tasksProvider);
@@ -82,32 +144,50 @@ class KanbanBoard extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) => Center(child: Text("Error: $err")),
         data: (tasks) {
-          // Wrap in a horizontal scroll view to prevent overflow
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 760;
+              final columns = [
                 _buildColumn(
                   context,
                   "To Do",
                   tasks.where((t) => t.status == 'todo').toList(),
                   ref,
+                  isNarrow,
                 ),
                 _buildColumn(
                   context,
                   "In Progress",
                   tasks.where((t) => t.status == 'in_progress').toList(),
                   ref,
+                  isNarrow,
                 ),
                 _buildColumn(
                   context,
                   "Done",
                   tasks.where((t) => t.status == 'done').toList(),
                   ref,
+                  isNarrow,
                 ),
-              ],
-            ),
+              ];
+
+              if (isNarrow) {
+                return ListView(
+                  padding: const EdgeInsets.all(8),
+                  children: columns,
+                );
+              }
+
+              return Padding(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: columns
+                      .map((column) => Expanded(child: column))
+                      .toList(),
+                ),
+              );
+            },
           );
         },
       ),
@@ -119,50 +199,114 @@ class KanbanBoard extends ConsumerWidget {
     String title,
     List<Task> tasks,
     WidgetRef ref,
+    bool isNarrow,
   ) {
-    // Set a fixed width for columns so they don't squish
-    return SizedBox(
-      width: 280,
-      child: Container(
-        margin: const EdgeInsets.all(8),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: Colors.black, width: 2),
-        ),
-        child: Column(
-          children: [
-            Text(
-              title.toUpperCase(),
-              style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
-            ),
-            const Divider(color: Colors.black, thickness: 2),
-            Expanded(
-              child: ListView.builder(
-                shrinkWrap: true, // Allows ListView to fit inside the column
-                itemCount: tasks.length,
-                itemBuilder: (context, index) =>
-                    _buildTaskCard(context, tasks[index], ref),
-              ),
-            ),
-          ],
-        ),
+    final status = _statusFromTitle(title);
+
+    final content = DragTarget<Task>(
+      onWillAcceptWithDetails: (details) => details.data.status != status,
+      onAcceptWithDetails: (details) =>
+          _updateTaskStatus(context, details.data, status, ref),
+      builder: (context, candidateData, rejectedData) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          decoration: BoxDecoration(
+            border: candidateData.isNotEmpty
+                ? Border.all(color: Colors.blue, width: 2)
+                : null,
+          ),
+          child: tasks.isEmpty
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'Drag tasks here',
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                )
+              : ListView.builder(
+                  shrinkWrap: isNarrow,
+                  physics: isNarrow
+                      ? const NeverScrollableScrollPhysics()
+                      : null,
+                  itemCount: tasks.length,
+                  itemBuilder: (context, index) =>
+                      _buildTaskCard(context, tasks[index], ref),
+                ),
+        );
+      },
+    );
+
+    return Container(
+      margin: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.black, width: 2),
+      ),
+      child: Column(
+        children: [
+          Text(
+            title.toUpperCase(),
+            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
+          ),
+          const Divider(color: Colors.black, thickness: 2),
+          if (isNarrow) content else Expanded(child: content),
+        ],
       ),
     );
   }
 
   Widget _buildTaskCard(BuildContext context, Task task, WidgetRef ref) {
+    return Draggable<Task>(
+      data: task,
+      dragAnchorStrategy: pointerDragAnchorStrategy,
+      feedback: Material(
+        elevation: 8,
+        color: Colors.transparent,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 260),
+          child: _buildTaskCardContent(context, task, ref, isDragging: true),
+        ),
+      ),
+      childWhenDragging: Opacity(
+        opacity: 0.3,
+        child: _buildTaskCardContent(context, task, ref),
+      ),
+      child: _buildTaskCardContent(context, task, ref),
+    );
+  }
+
+  Widget _buildTaskCardContent(
+    BuildContext context,
+    Task task,
+    WidgetRef ref, {
+    bool isDragging = false,
+  }) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: _getStatusColor(task.status),
         border: Border.all(color: Colors.black),
+        boxShadow: isDragging
+            ? [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.25),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Subject Badge
           if (task.subject != null && task.subject!.isNotEmpty)
             Container(
               margin: const EdgeInsets.only(bottom: 8),
@@ -193,6 +337,7 @@ class KanbanBoard extends ConsumerWidget {
             children: [
               IconButton(
                 icon: const Icon(Icons.edit, size: 16),
+                tooltip: 'Edit task',
                 onPressed: () async {
                   await Navigator.push(
                     context,

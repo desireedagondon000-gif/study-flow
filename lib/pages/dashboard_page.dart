@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../auth/auth_provider.dart';
 import '../widgets/app_header.dart';
 import 'landing_page.dart';
@@ -16,8 +17,24 @@ final sidebarIndexProvider = NotifierProvider<SidebarIndexNotifier, int>(
 
 class SidebarIndexNotifier extends Notifier<int> {
   @override
-  int build() => 0;
-  void setIndex(int index) => state = index;
+  int build() {
+    _restoreIndex();
+    return 0;
+  }
+
+  Future<void> _restoreIndex() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedIndex = prefs.getInt('sidebar_index') ?? 0;
+    if (ref.mounted) {
+      state = savedIndex;
+    }
+  }
+
+  Future<void> setIndex(int index) async {
+    state = index;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('sidebar_index', index);
+  }
 }
 
 class DashboardPage extends ConsumerWidget {

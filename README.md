@@ -5,13 +5,22 @@ A simple study planning application designed to help students organize tasks, ma
 # Features
 
 ### Kanban Style Task Manager: 
-A structured task management interface that allows users to visualize their study workload across "To Do," "In Progress," and "Done" states with manual status transitions.
+A structured task management interface that allows users to visualize their study workload across "To Do," "In Progress," and "Done" states with drag-and-drop status transitions.
 
 ### Progress Tracking: 
 Provides a clear, real-time overview of academic progress by calculating task completion rates and subject-specific workload distribution.
 
 ### Study Session Timer: 
 An integrated focus tool that allows users to start and manage study sessions, helping them maintain productivity on specific tasks.
+
+### Inline Pomodoro Panels: 
+Study cards now expand into inline Pomodoro panels with pause/continue controls, preset timers (10m/25m/50m), and a dedicated leave button.
+
+### Notes & Revision Cards: 
+Quick note and revision card CRUD support has been added directly inside the study planner flow for faster capture and review.
+
+### Local Persistence: 
+Study planner state, timers, and notes are saved locally so the session resumes correctly after leaving or returning to the app.
 
 ### Cloud Sync: 
 Backend integration with Supabase, ensuring secure data persistence and synchronization of tasks across sessions.
@@ -121,8 +130,8 @@ A Study Session Page where the user can use the pomodoro timer for tasks that re
 
 ---
 
-### Pomodoro Timer: 
-A focused, utility-driven overlay to keep users productive during active study sessions.
+### Personal Task Focus Session: 
+A focused, utility-driven overlay to keep users productive during active study sessions with pomodoro timer, revision cards, and quick notes.
 
 <img src="assets/screenshots/pomodoro.png" width="400"> 
 

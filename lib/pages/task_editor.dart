@@ -106,100 +106,133 @@ class _TaskEditorState extends State<TaskEditor> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFFDF5),
       appBar: AppBar(
-        title: Text(
-          widget.task == null ? "NEW TASK" : "EDIT TASK",
-          style: const TextStyle(
-            fontWeight: FontWeight.w900,
-            color: Colors.black,
-          ),
-        ),
+        toolbarHeight: 0,
         backgroundColor: const Color(0xFFFFFDF5),
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-        actions: [
-          if (widget.task != null)
-            IconButton(
-              icon: const Icon(Icons.delete_outline),
-              onPressed: _deleteTask,
-            ),
-        ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(32.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 500),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _titleController,
-                    decoration: const InputDecoration(
-                      labelText: 'Title',
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _subjectController, // Added Subject Input
-                    decoration: const InputDecoration(
-                      labelText: 'Subject',
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _descController,
-                    decoration: const InputDecoration(
-                      labelText: 'Description',
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                    maxLines: 5,
-                  ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    initialValue:
-                        _status, // Use value instead of initialValue for dynamic updates
-                    decoration: const InputDecoration(
-                      labelText: 'Status',
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                    items: ['todo', 'in_progress', 'done']
-                        .map(
-                          (s) => DropdownMenuItem(
-                            value: s,
-                            child: Text(s.toUpperCase()),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (val) => setState(() => _status = val!),
-                  ),
-                  const SizedBox(height: 32),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
-                        shape: const RoundedRectangleBorder(),
-                      ),
-                      onPressed: _saveTask,
-                      child: const Text(
-                        "SAVE TASK",
-                        style: TextStyle(fontWeight: FontWeight.w900),
-                      ),
-                    ),
+            constraints: const BoxConstraints(maxWidth: 580),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: Colors.black, width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 24,
+                    offset: const Offset(0, 12),
                   ),
                 ],
+              ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        InkWell(
+                          borderRadius: BorderRadius.circular(14),
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: const BoxDecoration(
+                              color: Colors.black,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                        if (widget.task != null)
+                          IconButton(
+                            onPressed: _deleteTask,
+                            icon: const Icon(Icons.delete_outline),
+                            color: Colors.black,
+                            tooltip: 'Delete task',
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    TextField(
+                      controller: _titleController,
+                      decoration: const InputDecoration(
+                        labelText: 'Title',
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _subjectController, // Added Subject Input
+                      decoration: const InputDecoration(
+                        labelText: 'Subject',
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _descController,
+                      decoration: const InputDecoration(
+                        labelText: 'Description',
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      maxLines: 5,
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      initialValue: _status,
+                      decoration: const InputDecoration(
+                        labelText: 'Status',
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      items: ['todo', 'in_progress', 'done']
+                          .map(
+                            (s) => DropdownMenuItem(
+                              value: s,
+                              child: Text(s.toUpperCase()),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (val) => setState(() => _status = val!),
+                    ),
+                    const SizedBox(height: 32),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        onPressed: _saveTask,
+                        child: const Text(
+                          "SAVE TASK",
+                          style: TextStyle(fontWeight: FontWeight.w900),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
